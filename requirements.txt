@@ -1,0 +1,19 @@
+# ----- Core (CPU PyTorch) -----
+torch==2.2.2
+torchvision==0.17.2
+typing_extensions>=4.8.0
+
+# ----- GUI -----
+PyQt5>=5.15.10
+
+# ----- Image / Data -----
+Pillow>=10.0.1
+numpy>=1.26.0,<2.0.0
+pandas>=2.1.0
+
+# ----- Utilities -----
+tqdm>=4.66.0
+matplotlib>=3.8.0
+
+# ----- Config -----
+python-dotenv>=1.0.0
