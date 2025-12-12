@@ -26,12 +26,15 @@ VisionQC-Local-AI는 OpenAI Vision API 대신, 직접 학습한 ResNet34 기반 
 - Backbone: ResNet34 (ImageNet pretrained)
 - Feature dimension: 512
 - Classification heads:
-  - Defect type head: 512 → 7
+  - Defect type head: 512 → 6
   - Severity head: 512 → 3
-  - Location head: 512 → 4
+  - Location head: 512 → 3
 - Softmax 기반 multi-task classification
+- WeightedRandomSampler 사용 → 학습 데이터 편중 문제 보완
+- Stochastic Gradient Descent optimizer 사용 → 파인 튜닝에서 Adam 보다 안정적
+
 - Combined loss:
-  total_loss = 1.0*loss_defect + 0.7*loss_severity + 0.7*loss_location
+  total_loss = 1.0 * loss_defect + 0.7 * loss_severity + 0.7 * loss_location
 
 ---
 
@@ -112,7 +115,8 @@ VisionQC-Local-AI는 이러한 문제를 모두 해결합니다.
 - 목적:  
   - 보다 세밀한 feature adaptation  
   - 불량 패턴(스크래치, 크랙, 찌그러짐 등)의 미묘한 차이를 백본 수준에서 반영  
-  - 과적합을 피하면서 정밀도 향상  
+  - 과적합을 피하면서 정밀도 향상
+- Early Stopping (patience = 3)으로 과학습 방지
 
 **효과:**  
 클래스 간 차이가 미묘한 자동차 외장 불량 이미지에서  
@@ -128,7 +132,7 @@ VisionQC-Local-AI는 이러한 문제를 모두 해결합니다.
 - 클래스 간 불균형 존재  
 - 촬영 각도 다양  
 - 라벨 품질이 완벽하지 않음  
-- 7-class defect + 3-class severity + 4-class location → **멀티태스크 구조**
+- 6-class defect + 3-class severity + 3-class location → **멀티태스크 구조**
 
 이런 조건에서 전 레이어를 한 번에 학습하면:
 
@@ -191,15 +195,15 @@ CarDD는 차량 외장 손상 이미지 약 4,000장을 포함하고 있으며, 
 ### 🖥️ 메인 화면
 이미지 업로드 → AI 모델로 분류 → DB 저장 → 결과 표시
 
-![DB Table](./assets/db_results_table_new.png)
+![DB Table](./assets/db_results_table.png)
+![Result](./assets/classify_result_.png)
 ---
 
 ### 📊 통계 대시보드 (Stats Dashboard)
-![Stats Dashboard UI](./assets/stats_dashboard.png)
 
 #### 1️⃣ Defect Distribution
 심각도(Severity)별 결함 발생 빈도를 나타내는 스택형 바 차트  
-![Defect Distribution](./assets/Defect%20Distribution.png)
+![Defect Distribution](./assets/Defect%20Distribution_.png)
 
 #### 2️⃣ Daily Trend
 일자별 불량 발생 추이를 보여주는 라인 차트  
@@ -208,11 +212,11 @@ CarDD는 차량 외장 손상 이미지 약 4,000장을 포함하고 있으며, 
 #### 3️⃣ Additional Metrics
 - Defect Type Ratio (Top10)  
 - Severity Ratio (A/B/C)
-![Additional Metrics](./assets/Additional%20Metrics.png)
+![Additional Metrics](./assets/Additional%20Metrics_.png)
 
 #### 4️⃣ Location & Action
 위치별 결함 분포 및 조치(Action) 비율 시각화  
-![Location Action](./assets/Location_Action.png)
+![Location Action](./assets/Location_Action_.png)
 
 ---
 
